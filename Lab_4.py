@@ -64,20 +64,94 @@ class Nodo:
         return str(self.get_estado())
 
 
-def busca_solucion(nodo_inicial, nodos_visitados, solucion, frente_rio):
-    print('a')
-    if nodo_inicial.get_estado() == solucion:
-        return nodo_inicial
-    else
+vacio = ''
+pastor = 'P'
+oveja = 'O'
+lobo = 'L'
+hierba = 'H'
+
+
+def busca_solucion(estado_inicial, solucion, frente_rio):
+    """nodo_inicial = Nodo(estado_inicial)
+    nodos_frontera = []
+    nodos_frontera.append(nodo_inicial)"""
+    nodos_frontera = []
+    nodos_visitados = []
+    nodo_inicial = Nodo(estado_inicial)
+    nodos_frontera.append(nodo_inicial)
+    pastor_esta_frente = False
+
+    nodo_actual = nodos_frontera.pop(0)
+    # nodos_frontera.pop()
+    estado_actual = nodo_actual.get_estado()
+
+    if nodo_actual not in nodos_visitados:
+        nodos_visitados.append(nodo_actual)
+
+    if nodo_actual.get_estado() == solucion:
+        print('osiiii')
+        return nodo_actual
+    else:
+        lista_nodos_hijo = []
+
+        if pastor_esta_frente:
+            estado_actual[0][0] = pastor
+            estado_actual[1][0] = vacio
+            pastor_esta_frente = False
+        else:
+            estado_actual[0][0] = vacio
+            estado_actual[1][0] = pastor
+            pastor_esta_frente = True
+
+        for i in range(1, len(estado_actual[0])):
+            nuevo_estado = estado_actual[:]
+
+            if nuevo_estado[0][i] != vacio and nuevo_estado[0][0] == vacio:
+                nuevo_estado[0][i] = vacio
+                nuevo_estado[1][i] = simbolo(i)
+            elif nuevo_estado[1][i] != vacio and nuevo_estado[1][0] == vacio:
+                nuevo_estado[1][i] = vacio
+                nuevo_estado[0][i] = simbolo(i)
+
+            lista_nodos_hijo.append(Nodo(nuevo_estado))
+
+            if not lista_nodos_hijo[i - 1].en_lista(nodos_visitados) and not lista_nodos_hijo[i - 1].en_lista(
+                    nodos_frontera):
+                nodos_frontera.append(lista_nodos_hijo[i - 1])
+            print(nuevo_estado[0])
+            print(nuevo_estado[1])
+
+        nodo_actual.set_hijo(lista_nodos_hijo)
+
+
+def simbolo(posicion):
+    match posicion:
+        case 1:
+            return oveja
+        case 2:
+            return lobo
+        case 3:
+            return hierba
+
+
+def heuristica(estado):
+    print('')
 
 
 if __name__ == '__main__':
-    Inicio = ['P', 'O', 'L', 'H']
-    Solucion = [Inicio]
-    Fin = ['', '', '', '']
+    Inicio = [['P', 'O', 'L', 'H'], ['', '', '', '']]
+    Solucion = [['', '', '', ''], ['P', 'O', 'L', 'H']]
 
-    NodosVisitados = []
-    NodoInicial = Nodo(Fin)
-    NodosVisitados.append(NodoInicial)
+    NodoSolucion = busca_solucion(Inicio, Solucion, Inicio)
+    nodo_actual = NodoSolucion
+    resultado = []
 
-    NodoSolucion = busca_solucion(NodoInicial, NodosVisitados, Solucion, Inicio)
+    while nodo_actual.get_padre() is not None:
+        resultado.append(nodo_actual.get_estado())
+        nodo_actual = nodo_actual.get_padre()
+    resultado.append(Inicio)
+    resultado.reverse()
+
+    for i in range(len(resultado)):
+        print(resultado[i])
+        print('=====================')
