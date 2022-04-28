@@ -147,7 +147,9 @@ def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados):
                 print(f'{estado_anterior} {estado_posterior}')
 
                 lista_hijos.append(Nodo(estado_anterior))
+                lista_hijos[-1].set_accion_anterior(anterior)
                 lista_hijos.append(Nodo(estado_posterior))
+                lista_hijos[-2].set_accion_anterior(anterior)
 
         nodo_inicial.set_hijo(lista_hijos)
 
