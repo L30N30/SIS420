@@ -144,20 +144,20 @@ def heuristica(estado):
             calidad += 1
     if len(animales) > 1:
         for i in range(0, len(animales)):
-        match animales[i]:
-            case oveja:
-                for j in range(i, len(animales)):
-                    if j+1 < len(animales):
-                        if animales[j+1] == lobo and estado[1][0] != pastor: calidad = 0
-                        elif animales[j+1] == hierba and estado[1][0] != pastor: calidad = 0
-            case lobo:
-                for j in range(i, len(animales)):
-                    if j + 1 < len(animales):
-                        if animales[j + 1] == oveja and estado[1][0] != pastor: calidad = 0
-            case hierba:
-                for j in range(i, len(animales)):
-                    if j + 1 < len(animales):
-                        if animales[j + 1] == oveja and estado[1][0] != pastor: calidad = 0
+            match animales[i]:
+                case oveja:
+                    for j in range(i, len(animales)):
+                        if j+1 < len(animales):
+                            if animales[j+1] == lobo and estado[1][0] != pastor: calidad = 0
+                            elif animales[j+1] == hierba and estado[1][0] != pastor: calidad = 0
+                case lobo:
+                    for j in range(i, len(animales)):
+                        if j + 1 < len(animales):
+                            if animales[j + 1] == oveja and estado[1][0] != pastor: calidad = 0
+                case hierba:
+                    for j in range(i, len(animales)):
+                        if j + 1 < len(animales):
+                            if animales[j + 1] == oveja and estado[1][0] != pastor: calidad = 0
     return calidad
 
 
