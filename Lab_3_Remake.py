@@ -1,4 +1,7 @@
+import sys
 import copy
+
+sys.setrecursionlimit(100000)
 
 espacio = ' '
 numEspaciosTorres = 0
@@ -121,7 +124,7 @@ def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados):
             pieza_anterior = nodo_accion_anterior.get_accion_anterior()
 
         nodo_estado = copy.deepcopy(nodo_inicial.get_estado()[:])
-        print(nodo_estado)
+        #print(nodo_estado)
 
         lista_hijos = []
 
@@ -144,10 +147,9 @@ def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados):
                 estado_anterior[i].pop()
                 estado_posterior[ad_pos].append(posterior)
                 estado_posterior[i].pop()
-                print(f'{estado_anterior} {estado_posterior}')
 
                 lista_hijos.append(Nodo(estado_anterior))
-                lista_hijos[-1].set_accion_anterior(anterior)
+                lista_hijos[-1].set_accion_anterior(posterior)
                 lista_hijos.append(Nodo(estado_posterior))
                 lista_hijos[-2].set_accion_anterior(anterior)
 
@@ -160,12 +162,12 @@ def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados):
             hijo_nodo.setHeuristica(cache_heuristica)
 
         heuristica.sort()
-        print(heuristica)
+        #print(heuristica)
 
         cont = 0
-        for i in heuristica:
+        for i in range(0, len(heuristica)):
             for hijo_node in nodo_inicial.get_hijo():
-                if hijo_node.getHeuristica == heuristica[cont] and not hijo_node.get_estado() in visitados:
+                if hijo_node.getHeuristica() == heuristica[i] and not hijo_node.get_estado() in visitados:
                     recursiva = busqueda_estrella_hanoi(hijo_node, solucion, visitados)
                     if recursiva is not None:
                         return recursiva
@@ -187,7 +189,7 @@ def heuristica_costo(hijo):
     for i in range(3):
         estadoHijo = hijo.get_estado()[:]
         if len(estadoHijo[i]) > 1 and estadoHijo[i][-1] > estadoHijo[i][-2]:
-            heuristica += (estadoHijo[i][-1] + estadoHijo[i][-2]) * 2
+            heuristica += (estadoHijo[i][-1] + estadoHijo[i][-2]) * 100
         elif len(estadoHijo[i]) > 1 and estadoHijo[i][-1] < estadoHijo[i][-2]:
             sumAritmetica = 0
             cont = 1
@@ -198,7 +200,7 @@ def heuristica_costo(hijo):
                     isRegla2 = True
                 cont += 1
             if not isRegla2:
-                heuristica += estadoHijo[i][-1] + estadoHijo[i][-2]
+                heuristica += (estadoHijo[i][-1] + estadoHijo[i][-2]) * 100
         costo_heuristica = hijo.get_costo() + heuristica
     for i in range(3):
         if len(estadoHijo[i]) > 0:
@@ -217,7 +219,7 @@ def posicion_costo(parametro):
             return 1
 
 
-def dibujar(posicionDiscos):
+def dibujar(posicion_discos):
     trazoTorre_1 = []
     trazoTorre_2 = []
     trazoTorre_3 = []
@@ -226,11 +228,11 @@ def dibujar(posicionDiscos):
     dif = 0
     i = 0
     while i < torre:
-        if len(posicionDiscos[0]) > 0 and dif < len(posicionDiscos[0]):
+        if len(posicion_discos[0]) > 0 and dif < len(posicion_discos[0]):
             ficha = ''
-            ficha += ((numEspaciosTorres*2) - posicionDiscos[0][i-dif])*espacio
-            ficha += disco(posicionDiscos[0][i-dif])
-            ficha += ((numEspaciosTorres*2) - posicionDiscos[0][i-dif])*espacio
+            ficha += ((numEspaciosTorres*2) - posicion_discos[0][i - dif]) * espacio
+            ficha += disco(posicion_discos[0][i - dif])
+            ficha += ((numEspaciosTorres*2) - posicion_discos[0][i - dif]) * espacio
             trazoTorre_1.append(ficha)
             trazoTorre_1.append(f'{espacio*(numEspaciosTorres*2)}{simboloTorre}{espacio*(numEspaciosTorres*2)}')
             i += 2
@@ -243,11 +245,11 @@ def dibujar(posicionDiscos):
     dif = 0
     i = 0
     while i < torre:
-        if len(posicionDiscos[1]) > 0 and dif < len(posicionDiscos[1]):
+        if len(posicion_discos[1]) > 0 and dif < len(posicion_discos[1]):
             ficha = ''
-            ficha += ((numEspaciosTorres * 2) - posicionDiscos[1][i - dif]) * espacio
-            ficha += disco(posicionDiscos[1][i - dif])
-            ficha += ((numEspaciosTorres * 2) - posicionDiscos[1][i - dif]) * espacio
+            ficha += ((numEspaciosTorres * 2) - posicion_discos[1][i - dif]) * espacio
+            ficha += disco(posicion_discos[1][i - dif])
+            ficha += ((numEspaciosTorres * 2) - posicion_discos[1][i - dif]) * espacio
             trazoTorre_2.append(ficha)
             trazoTorre_2.append(f'{espacio * (numEspaciosTorres * 2)}{simboloTorre}{espacio * (numEspaciosTorres * 2)}')
             i += 2
@@ -260,11 +262,11 @@ def dibujar(posicionDiscos):
     dif = 0
     i = 0
     while i < torre:
-        if len(posicionDiscos[2]) > 0 and dif < len(posicionDiscos[2]):
+        if len(posicion_discos[2]) > 0 and dif < len(posicion_discos[2]):
             ficha = ''
-            ficha += ((numEspaciosTorres * 2) - posicionDiscos[2][i - dif]) * espacio
-            ficha += disco(posicionDiscos[2][i - dif])
-            ficha += ((numEspaciosTorres * 2) - posicionDiscos[2][i - dif]) * espacio
+            ficha += ((numEspaciosTorres * 2) - posicion_discos[2][i - dif]) * espacio
+            ficha += disco(posicion_discos[2][i - dif])
+            ficha += ((numEspaciosTorres * 2) - posicion_discos[2][i - dif]) * espacio
             trazoTorre_3.append(ficha)
             trazoTorre_3.append(f'{espacio * (numEspaciosTorres * 2)}{simboloTorre}{espacio * (numEspaciosTorres * 2)}')
             i += 2
@@ -294,7 +296,7 @@ if __name__ == '__main__':
     torre += generar_fichas(numUsuario)
     numEspaciosTorres = len(posicionDiscos[0])
     posicionDiscosSolucion = [[], [], posicionDiscos[0]]
-    #dibujar(posicionDiscos)
+    dibujar(posicionDiscos)
 
     nodosVisitados = []
     nodoInicial = Nodo(posicionDiscos)
@@ -306,10 +308,15 @@ if __name__ == '__main__':
 
     pasos = []
     padre = nodoSolucion
+    num_pasos = 0
     while padre.get_padre() is not None:
-        pasos.append(padre.get_estado())
+        paso = padre.get_estado()
+        pasos.append(paso)
         padre = padre.get_padre()
+        num_pasos += 1
     pasos.append(nodoInicial)
     pasos.reverse()
-    for nodo in pasos:
-        dibujar(nodo.get_estado())
+    for i in range(0, len(pasos)):
+        print(pasos[i])
+        #dibujar(paso)
+    print(f'Pasos empleados: {num_pasos}')
