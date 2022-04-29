@@ -108,8 +108,9 @@ class Nodo:
         return str(self.get_estado())
 
 
-def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados):
+def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados, pieza_anterior):
     visitados.append(nodo_inicial.get_estado())
+    print(nodo_inicial.get_estado())
 
     if nodo_inicial.get_estado() == solucion:
         return nodo_inicial
@@ -118,19 +119,19 @@ def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados):
         # 1 No mover el mismo disco más de una vez seguida
         # 2 Cualquier disco puede moverse sobre otro tres veces mayor a él mismo regla aritmética
         # 3 Heurística
-        pieza_anterior = 0
-        if nodo_inicial.get_padre() is not None:
-            nodo_accion_anterior = nodo_inicial.get_padre()
-            pieza_anterior = nodo_accion_anterior.get_accion_anterior()
+
+        # Revisar si el nodo padre tiene registrado un paso anterior para no repetirlo
+
 
         nodo_estado = copy.deepcopy(nodo_inicial.get_estado()[:])
         #print(nodo_estado)
 
         lista_hijos = []
+        nueva_pieza_anterior = []
 
-        # Lista de piezas habilitadas para mover
+        # Mueve todas las piezas
         for i in range(3):
-            if len(nodo_estado[i]) > 0 and nodo_estado[i][-1] != pieza_anterior:
+            if len(nodo_estado[i]) > 0 and nodo_estado[i][-1] not in pieza_anterior:
                 ad_ant = i - 1
                 ad_pos = i + 1
 
@@ -149,29 +150,28 @@ def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados):
                 estado_posterior[i].pop()
 
                 lista_hijos.append(Nodo(estado_anterior))
-                lista_hijos[-1].set_accion_anterior(posterior)
                 lista_hijos.append(Nodo(estado_posterior))
-                lista_hijos[-2].set_accion_anterior(anterior)
+
+                nueva_pieza_anterior.append(anterior)
 
         nodo_inicial.set_hijo(lista_hijos)
 
+        heuristica = None
         heuristica = []
+
         for hijo_nodo in nodo_inicial.get_hijo():
             cache_heuristica = heuristica_costo(hijo_nodo)
             heuristica.append(cache_heuristica)
             hijo_nodo.setHeuristica(cache_heuristica)
 
         heuristica.sort()
-        #print(heuristica)
 
-        cont = 0
-        for i in range(0, len(heuristica)):
+        for i in range(len(heuristica)):
             for hijo_node in nodo_inicial.get_hijo():
                 if hijo_node.getHeuristica() == heuristica[i] and not hijo_node.get_estado() in visitados:
-                    recursiva = busqueda_estrella_hanoi(hijo_node, solucion, visitados)
+                    recursiva = busqueda_estrella_hanoi(hijo_node, solucion, visitados, nueva_pieza_anterior)
                     if recursiva is not None:
                         return recursiva
-            cont += 1
         return None
 
 
@@ -187,16 +187,17 @@ def heuristica_costo(hijo):
     heuristica = 0
 
     for i in range(3):
-        estadoHijo = hijo.get_estado()[:]
+        estadoHijo = copy.deepcopy(hijo.get_estado())
         if len(estadoHijo[i]) > 1 and estadoHijo[i][-1] > estadoHijo[i][-2]:
             heuristica += (estadoHijo[i][-1] + estadoHijo[i][-2]) * 100
         elif len(estadoHijo[i]) > 1 and estadoHijo[i][-1] < estadoHijo[i][-2]:
             sumAritmetica = 0
+            diferencia = estadoHijo[i][-2] - estadoHijo[i][-1]
             cont = 1
             isRegla2 = False
-            while estadoHijo[i][-2] >= sumAritmetica:
+            while diferencia >= sumAritmetica:
                 sumAritmetica = (2 * cont) - 1
-                if sumAritmetica == (estadoHijo[i][-2] - estadoHijo[i][-1]):
+                if sumAritmetica == diferencia:
                     isRegla2 = True
                 cont += 1
             if not isRegla2:
@@ -204,8 +205,8 @@ def heuristica_costo(hijo):
         costo_heuristica = hijo.get_costo() + heuristica
     for i in range(3):
         if len(estadoHijo[i]) > 0:
-            for j in estadoHijo[i]:
-                costo_heuristica += j * posicion_costo(i)
+            for pieza in estadoHijo[i]:
+                costo_heuristica += pieza + posicion_costo(i)
     return costo_heuristica
 
 
@@ -304,7 +305,7 @@ if __name__ == '__main__':
     nodosVisitados.append(nodoInicial)
 
     # Formula aritmetica: 1+(2)(n−1) = 2n-1
-    nodoSolucion = busqueda_estrella_hanoi(nodoInicial, posicionDiscosSolucion, nodosVisitados)
+    nodoSolucion = busqueda_estrella_hanoi(nodoInicial, posicionDiscosSolucion, nodosVisitados, [0])
 
     pasos = []
     padre = nodoSolucion

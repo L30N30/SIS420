@@ -92,6 +92,7 @@ def start():
 
     generar_plagas(columnas, filas)
     dibujar_sembradio(columnas, filas, 'Matriz generada...')
+
     # Iniciar Agente
     correrRobot(columnas, filas)
 
@@ -143,7 +144,7 @@ def plaga():
 
 # Booleano de probabilidad
 def azar(prob):
-    if random.randint(1,prob) == 1:
+    if random.randint(1, prob) == 1:
         return 1
 
 
@@ -159,7 +160,7 @@ def moverAgente(columna, fila, agente):
             for j in range(0, columna):
                 matriz[i][j] = vacio
         print('Todas las plagas han sido eliminadas.')
-        time.sleep(2)
+        time.sleep(1)
         matriz[0][0] = robot
         print('Reiniciando sembradío...')
         dibujar_sembradio(columna,fila,'')

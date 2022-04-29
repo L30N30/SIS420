@@ -125,8 +125,8 @@ def busqueda_BPA_solucion(estado_inicial, solucion):
 
 if __name__ == "__main__":
     # El programa funciona con listas de cualquier tamaño (mayor a 1) siempre y cuando tengan los mismos elementos
-    estado_inicial = [7, 6, 5, 4, 3, 2, 1]
-    solucion = [1, 2, 3, 4, 5, 6, 7]
+    estado_inicial = [5, 4, 3, 2, 1]
+    solucion = [1, 2, 3, 4, 5]
 
     # Marca el tiempo transcurrido antes de comenzar la búsqueda
     inicioReloj = timeit.default_timer()
