@@ -90,7 +90,7 @@ def busqueda_BPA_solucion(estado_inicial, solucion):
         nodo_actual = nodos_frontera.pop(0)
         # extraer nodo y añadirlo a visitados
         nodos_visitados.append(nodo_actual)
-        #numeroCiclos += 1
+
         if nodo_actual.get_estado() == solucion:
             # Solución encontrada
             resuelto = True
@@ -125,8 +125,8 @@ def busqueda_BPA_solucion(estado_inicial, solucion):
 
 if __name__ == "__main__":
     # El programa funciona con listas de cualquier tamaño (mayor a 1) siempre y cuando tengan los mismos elementos
-    estado_inicial = [5, 4, 3, 2, 1]
-    solucion = [1, 2, 3, 4, 5]
+    estado_inicial = [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+    solucion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
 
     # Marca el tiempo transcurrido antes de comenzar la búsqueda
     inicioReloj = timeit.default_timer()

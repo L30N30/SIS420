@@ -161,7 +161,6 @@ def heuristica(estado):
     return calidad
 
 
-
 if __name__ == '__main__':
     Inicio = [['P', 'O', 'L', 'H'], ['', '', '', '']]
     Solucion = [['', '', '', ''], ['P', 'O', 'L', 'H']]

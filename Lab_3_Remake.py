@@ -156,7 +156,6 @@ def busqueda_estrella_hanoi(nodo_inicial, solucion, visitados, pieza_anterior):
 
         nodo_inicial.set_hijo(lista_hijos)
 
-        heuristica = None
         heuristica = []
 
         for hijo_nodo in nodo_inicial.get_hijo():
@@ -206,7 +205,7 @@ def heuristica_costo(hijo):
     for i in range(3):
         if len(estadoHijo[i]) > 0:
             for pieza in estadoHijo[i]:
-                costo_heuristica += pieza + posicion_costo(i)
+                costo_heuristica += pieza * posicion_costo(i)
     return costo_heuristica
 
 
