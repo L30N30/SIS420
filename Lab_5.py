@@ -1,9 +1,9 @@
 import random
 
+
 # Alunos:
 # Caique de Paula Figueiredo Coelho
 # Lucas Queiroz
-
 
 def getBoardCopy(board):
     # Faz uma copia do quadro e retrona esta copia
@@ -46,7 +46,7 @@ def inputPlayerLetter():
     # Retorna uma lista com a letra do jogador e a letra do computador
     letter = ''
     while not (letter == 'X' or letter == 'O'):
-        print('Quieres ser X o O?')
+        print('Voce quer ser X ou O?')
         letter = input().upper()
         if (letter != 'X' and letter != 'O'):
             print("Entre apenas com a letra X(xis) se voce quer ser X ou com a letra O(oh) se voce quer ser O!")
@@ -58,7 +58,7 @@ def inputPlayerLetter():
         return ['O', 'X']
 
 
-def whoGoesFirts():
+def whoGoesFirst():
     # Escolumnahe aleatoriamente o jogador que jogara primeiro
     if random.randint(0, 1) == 0:
         return 'computador'
@@ -105,13 +105,6 @@ def getPlayerMove(board):
                 print(
                     "ESPACO INSDISPONIVEL! ESCOLHA OUTRO ESPACO ENTRE 1 E 9 O QUAL O NUMERO ESTA DISPONIVEL NO QUADRO!")
 
-        copy = getBoardCopy(board)
-        makeMove(copy, playerLetter, 5)
-
-        if int(move) == 5 and not isWinner(copy, playerLetter):
-            print('Jugada invalida!')
-            move = ''
-
     return int(move)
 
 
@@ -144,13 +137,8 @@ def possiveisOpcoes(board):
     opcoes = []
 
     for i in range(1, 10):
-        copy = getBoardCopy(board)
-        makeMove(copy, computerLetter, i)
         if isSpaceFree(board, i):
-            if i == 5 and isWinner(copy, computerLetter):
-                opcoes.append(i)
-            elif i != 5:
-                opcoes.append(i)
+            opcoes.append(i)
 
     return opcoes
 
@@ -243,11 +231,7 @@ def getComputerMove(board, turn, computerLetter):
     # Primeiro chechamos se podemos ganhar no proximo movimento
     for i in range(1, 10):
         copy = getBoardCopy(board)
-        if isSpaceFree(copy, i) and i != 5:
-            makeMove(copy, computerLetter, i)
-            if isWinner(copy, computerLetter):
-                return i
-        elif i == 5:
+        if isSpaceFree(copy, i):
             makeMove(copy, computerLetter, i)
             if isWinner(copy, computerLetter):
                 return i
@@ -255,16 +239,10 @@ def getComputerMove(board, turn, computerLetter):
     # Checa se o jogador pode vencer no proximo movimento e bloqueia
     for i in range(1, 10):
         copy = getBoardCopy(board)
-        if i == 5:
+        if isSpaceFree(copy, i):
             makeMove(copy, playerLetter, i)
             if isWinner(copy, playerLetter):
-                print('Compu perdió!')
-                continue
-        else:
-            if isSpaceFree(copy, i):
-                makeMove(copy, playerLetter, i)
-                if isWinner(copy, playerLetter):
-                    return i
+                return i
 
     possiveisOpcoesOn = possiveisOpcoes(board)
 
@@ -284,7 +262,7 @@ def getComputerMove(board, turn, computerLetter):
     return random.choice(opcoes)
 
 
-print('Vamos a jugar Tres en Raya!')
+print('Vamos jogar jogo da velha!')
 
 jogar = True
 
@@ -292,8 +270,8 @@ while jogar:
     # Reseta o jogo
     theBoard = [''] * 10
     playerLetter, computerLetter = inputPlayerLetter()
-    turn = whoGoesFirts()
-    print('El ' + turn + ' juega primero,')
+    turn = whoGoesFirst()
+    print('O ' + turn + ' joga primeiro,')
     gameisPlaying = True
 
     while gameisPlaying:
@@ -305,13 +283,13 @@ while jogar:
 
             if isWinner(theBoard, playerLetter):
                 drawBoard(theBoard)
-                print('Woooow! Ganaste el juego!')
+                print('Woooow! Voce venceu o jogo!')
                 gameisPlaying = False
 
             else:
                 if isBoardFull(theBoard):
                     drawBoard(theBoard)
-                    print('Empate!')
+                    print('O jogo terminou empatado')
                     break
                 else:
                     turn = 'computador'
@@ -323,23 +301,23 @@ while jogar:
 
             if isWinner(theBoard, computerLetter):
                 drawBoard(theBoard)
-                print("Perdiste :(")
+                print("O computador venceu :(")
                 gameisPlaying = False
 
             else:
                 if isBoardFull(theBoard):
                     drawBoard(theBoard)
-                    print('Empate!')
+                    print('O jogo terminou empatado')
                     break
                 else:
                     turn = 'jogador'
 
     letterNew = ''
     while not (letterNew == 'S' or letterNew == 'N'):
-        print("Jugar otra vez? Escribe S(para si) o N(para no)")
+        print("Voce quer jogar novamente? Digite S(para sim) ou N(para nao)")
         letterNew = input().upper()
         if (letterNew != 'S' and letterNew != 'N'):
-            print("Entrada invalida! Escribe S(para si) o N(para no)")
+            print("Entrada invalida! Digite S(para sim) ou N(para nao)!")
         if (letterNew == 'N'):
-            print("Un gusto jugar contigo! Hasta luego!")
+            print("Foi bom jogar com voce! Ate mais!")
             jogar = False
