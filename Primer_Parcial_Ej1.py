@@ -87,22 +87,18 @@ def revisionHorizontal(brd, let, pos, min):
     piezas = 0
     cont = pos + 1
     while revisando:
-        if (cont >= 0 and cont < cap):
-            if (cont-1)%dim == 0 or cont > 25:
-                revisando = False
-                continue
-            elif cont >= cap or cont < 0:
-                revisando = False
-                continue
-            elif brd[cont] != let:
-                revisando = False
-                continue
-            if cont < cap and (cont-1)%dim !=0 and brd[cont] == let:
-                piezas += 1
-            cont += 1
-        else:
+        if (cont-1)%dim == 0 or cont > 25:
             revisando = False
             continue
+        elif cont >= cap or cont < 0:
+            revisando = False
+            continue
+        elif brd[cont] != let:
+            revisando = False
+            continue
+        if cont < cap and (cont-1)%dim !=0 and brd[cont] == let:
+            piezas += 1
+        cont += 1
     if piezas > min: return True
     else: return False
 
@@ -156,19 +152,12 @@ def revisionDiagonalP(brd, let, pos, min):
     piezas = 0
     cont = pos - (dim+1)
     while revisando:
-        if cont < 0:
-            if cont >= cap:
-                revisando = False
-                continue
-            elif brd[cont] != let:
-                revisando = False
-                continue
-            if brd[cont] == let:
-                piezas += 1
-            cont -= (dim + 1)
-        else:
+        if cont >= cap or brd[cont] != let:
             revisando = False
             continue
+        elif brd[cont] == let:
+            piezas += 1
+        cont -= (dim + 1)
     if piezas > min: return True
     else: return False
 
