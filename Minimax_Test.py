@@ -33,6 +33,7 @@ def estadoJuego(tabla, dimension, bloqueados):
                     isRevisando = False
             if revision >= 3:
                 print(f'{equis} gana!')
+                # ------------------------------------Avance actual------------------------------------
 
 
 def crearTabla(dimension):

@@ -87,7 +87,10 @@ def busqueda_BPA_solucion(estado_inicial, solucion):
     nodo_raiz = Nodo(estado_inicial)
     nodos_frontera.append(nodo_raiz)
     while (not resuelto) and len(nodos_frontera) != 0:
-        nodo_actual = nodos_frontera.pop(0)
+        # Por anchura
+        #nodo_actual = nodos_frontera.pop(0)
+        # Por profundidad
+        nodo_actual = nodos_frontera.pop()
         # extraer nodo y añadirlo a visitados
         nodos_visitados.append(nodo_actual)
 
