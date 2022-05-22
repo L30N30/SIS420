@@ -1,9 +1,108 @@
 import random
 
 
-# Alunos:
-# Caique de Paula Figueiredo Coelho
-# Lucas Queiroz
+celdas = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'
+          '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'
+          '21', '22', '23', '24', '25']
+cap = 26
+dim = 5
+
+
+def revisionHorizontal(brd, let, pos, det):
+    piezas = 1
+    increment = 1
+    cont = pos + increment
+    revisando = True
+
+    while revisando:
+        if ((cont-increment) % dim == 0) or (cont > (cap-1)):
+            revisando = False
+            continue
+        else:
+            if brd[cont] == let:
+                piezas += 1
+            else:
+                revisando = False
+                continue
+        cont += increment
+
+    if piezas >= det:
+        return True
+    else:
+        return False
+
+
+def revisionVertical(brd, let, pos, det):
+    piezas = 1
+    increment = 5
+    cont = pos + increment
+    revisando = True
+
+    while revisando:
+        if cont > (cap-1):
+            revisando = False
+            continue
+        else:
+            if brd[cont] == let:
+                piezas += 1
+            else:
+                revisando = False
+                continue
+        cont += increment
+
+    if piezas >= det:
+        return True
+    else:
+        return False
+
+
+def revisionDiagonal(brd, let, pos, det):
+    piezas = 1
+    increment = dim + 1
+    cont = pos + increment
+    revisando = True
+
+    while revisando:
+        if ((cont-increment) % dim == 0) or (cont > (cap-1)):
+            revisando = False
+            continue
+        else:
+            if brd[cont] == let:
+                piezas += 1
+            else:
+                revisando = False
+                continue
+        cont += increment
+
+    if piezas >= det:
+        return True
+    else:
+        return False
+
+
+def revisionDiagonalI(brd, let, pos, det):
+    piezas = 1
+    increment = dim - 1
+    cont = pos + increment
+    revisando = True
+
+    while revisando:
+        if ((cont-increment) % dim == 0) or (cont > (cap-1)):
+            revisando = False
+            continue
+        else:
+            if brd[cont] == let:
+                piezas += 1
+            else:
+                revisando = False
+                continue
+        cont += increment
+
+    if piezas >= det:
+        return True
+    else:
+        return False
+
 
 def getBoardCopy(board):
     # Faz uma copia do quadro e retrona esta copia
@@ -20,25 +119,27 @@ def drawBoard(board):
     # Esta funcao imprime o quadro do jogo
     # O quadro eh uma lista de 9 strings representando o qaudro
     copyBoard = getBoardCopy(board)
+    espacio = '----------------'
 
-    for i in range(1, 10):
+    for i in range(1, cap):
         if (board[i] == ''):
-            copyBoard[i] = str(i)
+            if i > 9:
+                copyBoard[i] = str(i)
+            else:
+                copyBoard[i] = f' {str(i)}'
         else:
-            copyBoard[i] = board[i]
+            copyBoard[i] = f' {board[i]}'
 
-    print(' ' + copyBoard[7] + '|' + copyBoard[8] + '|' + copyBoard[9])
-    # print(' | |')
-    print('-------')
-    # print(' | |')
-    print(' ' + copyBoard[4] + '|' + copyBoard[5] + '|' + copyBoard[6])
-    # print(' | |')
-    print('-------')
-    # print(' | |')
-    print(' ' + copyBoard[1] + '|' + copyBoard[2] + '|' + copyBoard[3])
-    # print(' | |')
-    print('-------')
-    # print(' | |')
+    print(' ' + copyBoard[21] + '|' + copyBoard[22] + '|' + copyBoard[23] + '|' + copyBoard[24] + '|' + copyBoard[25])
+    print(espacio)
+    print(' ' + copyBoard[16] + '|' + copyBoard[17] + '|' + copyBoard[18] + '|' + copyBoard[19] + '|' + copyBoard[20])
+    print(espacio)
+    print(' ' + copyBoard[11] + '|' + copyBoard[12] + '|' + copyBoard[13] + '|' + copyBoard[14] + '|' + copyBoard[15])
+    print(espacio)
+    print(' ' + copyBoard[6] + '|' + copyBoard[7] + '|' + copyBoard[8] + '|' + copyBoard[9] + '|' + copyBoard[10])
+    print(espacio)
+    print(' ' + copyBoard[1] + '|' + copyBoard[2] + '|' + copyBoard[3] + '|' + copyBoard[4] + '|' + copyBoard[5])
+    print(espacio)
 
 
 def inputPlayerLetter():
@@ -73,6 +174,10 @@ def makeMove(board, letter, move):
 
 def isWinner(brd, let):
     # Dado um quadro e uma letra, esta funcao retorna True se a letra passada vence o jogo
+    for i in range(1, cap):
+        if brd[i] == let:
+            if revisionHorizontal(brd, let, i, 3):
+                return True
     return ((brd[7] == let and brd[8] == let and brd[9] == let) or  # linha de cima
             (brd[4] == let and brd[5] == let and brd[6] == let) or  # linha do meio
             (brd[1] == let and brd[2] == let and brd[3] == let) or  # linha de baixo
@@ -94,16 +199,16 @@ def isSpaceFree(board, move):
 def getPlayerMove(board):
     # Recebe o movimento do jogador
     move = ''
-    while move not in '1 2 3 4 5 6 7 8 9'.split() or not isSpaceFree(board, int(move)):
-        print('Qual eh o seu proximo movimento? (1-9)')
+    while move not in celdas or not isSpaceFree(board, int(move)):
+        print('Cual es su próximo movimiento? (1-25)')
         move = input();
-        if (move not in '1 2 3 4 5 6 7 8 9'):
-            print("MOVIMENTO INVALIDO! INSIRA UM NUMERO ENTRE 1 E 9!")
+        if (move not in celdas):
+            print("MOVIMIENTO INVALIDO! ESCRIBE UN NUMERO ENTRE 1 y 25!")
 
-        if (move in '1 2 3 4 5 6 7 8 9'):
+        if (move in celdas):
             if (not isSpaceFree(board, int(move))):
                 print(
-                    "ESPACO INSDISPONIVEL! ESCOLHA OUTRO ESPACO ENTRE 1 E 9 O QUAL O NUMERO ESTA DISPONIVEL NO QUADRO!")
+                    "ESPACIO NO DISPONIBLE! ESCOJA OTRO ESPACIO ENTRE 1 y 25 U OTRO NÚMERO DEL TABLERO!")
 
     return int(move)
 
@@ -125,7 +230,7 @@ def chooseRandomMoveFromList(board, movesList):
 
 def isBoardFull(board):
     # Retorna True se todos os espacos do quadro estao indisponiveis
-    for i in range(1, 10):
+    for i in range(1, cap):
         if isSpaceFree(board, i):
             return False
     return True
@@ -136,7 +241,7 @@ def possiveisOpcoes(board):
 
     opcoes = []
 
-    for i in range(1, 10):
+    for i in range(1, cap):
         if isSpaceFree(board, i):
             opcoes.append(i)
 
@@ -229,7 +334,7 @@ def getComputerMove(board, turn, computerLetter):
 
     # Comecamos aqui o MiniMax
     # Primeiro chechamos se podemos ganhar no proximo movimento
-    for i in range(1, 10):
+    for i in range(1, cap):
         copy = getBoardCopy(board)
         if isSpaceFree(copy, i):
             makeMove(copy, computerLetter, i)
@@ -237,7 +342,7 @@ def getComputerMove(board, turn, computerLetter):
                 return i
 
     # Checa se o jogador pode vencer no proximo movimento e bloqueia
-    for i in range(1, 10):
+    for i in range(1, cap):
         copy = getBoardCopy(board)
         if isSpaceFree(copy, i):
             makeMove(copy, playerLetter, i)
@@ -262,16 +367,16 @@ def getComputerMove(board, turn, computerLetter):
     return random.choice(opcoes)
 
 
-print('Vamos jogar jogo da velha!')
+print('Tres en raya!')
 
 jogar = True
 
 while jogar:
     # Reseta o jogo
-    theBoard = [''] * 10
+    theBoard = [''] * 26
     playerLetter, computerLetter = inputPlayerLetter()
     turn = whoGoesFirst()
-    print('O ' + turn + ' joga primeiro,')
+    print('El ' + turn + ' juega primero,')
     gameisPlaying = True
 
     while gameisPlaying:
@@ -283,13 +388,13 @@ while jogar:
 
             if isWinner(theBoard, playerLetter):
                 drawBoard(theBoard)
-                print('Woooow! Voce venceu o jogo!')
+                print('Woooow! Ganaste el juego!')
                 gameisPlaying = False
 
             else:
                 if isBoardFull(theBoard):
                     drawBoard(theBoard)
-                    print('O jogo terminou empatado')
+                    print('EMPATE!')
                     break
                 else:
                     turn = 'computador'
@@ -301,23 +406,23 @@ while jogar:
 
             if isWinner(theBoard, computerLetter):
                 drawBoard(theBoard)
-                print("O computador venceu :(")
+                print("La IA ganó! :(")
                 gameisPlaying = False
 
             else:
                 if isBoardFull(theBoard):
                     drawBoard(theBoard)
-                    print('O jogo terminou empatado')
+                    print('EMPATE!')
                     break
                 else:
                     turn = 'jogador'
 
     letterNew = ''
     while not (letterNew == 'S' or letterNew == 'N'):
-        print("Voce quer jogar novamente? Digite S(para sim) ou N(para nao)")
+        print("Quieres jugar otra vez? Escribe S(para si) o N(para no)")
         letterNew = input().upper()
         if (letterNew != 'S' and letterNew != 'N'):
-            print("Entrada invalida! Digite S(para sim) ou N(para nao)!")
+            print("Entrada invalida! Escribe S(para si) o N(para no)!")
         if (letterNew == 'N'):
-            print("Foi bom jogar com voce! Ate mais!")
+            print("Un gusto jugar contigo! Hasta la proxima!")
             jogar = False

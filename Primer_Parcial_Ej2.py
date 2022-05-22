@@ -73,7 +73,7 @@ def mutar_individuo(individuo):
 
 
 def calcular_fitness(individuo):
-    fitness = 100
+    fitness = 0
     copy = individuo[:]
     for i in range(0, 10):
         for j in range(0, 10):

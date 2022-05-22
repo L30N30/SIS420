@@ -76,7 +76,7 @@ def makeMove(board, letter, move):
 
 def heuristica(brd, let, pos, min):
     copyBrd = getBoardCopy(brd)
-    if revisionHorizontal(copyBrd, let, pos, 2) or revisionVertical(copyBrd, let, pos, 2) or revisionDiagonal(copyBrd, let, pos, 2) or revisionDiagonalP(copyBrd, let, pos, 2):
+    if revisionHorizontal(copyBrd, let, pos, min) or revisionVertical(copyBrd, let, pos, min) or revisionDiagonal(copyBrd, let, pos, min) or revisionDiagonalP(copyBrd, let, pos, min):
         return True
     else:
         return False
