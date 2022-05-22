@@ -1,9 +1,9 @@
 import random
 
 
-celdas = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'
-          '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'
-          '21', '22', '23', '24', '25']
+celdas_bloqueadas = ['4', '7', '17', '25']
+celdas_bloqueadas_ai = [4, 7, 17, 25]
+celdas = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25']
 cap = 26
 dim = 5
 
@@ -81,13 +81,16 @@ def revisionDiagonal(brd, let, pos, det):
 
 
 def revisionDiagonalI(brd, let, pos, det):
+    if (pos - 1) % dim == 0:
+        return False
+
     piezas = 1
     increment = dim - 1
     cont = pos + increment
     revisando = True
 
     while revisando:
-        if ((cont-increment) % dim == 0) or (cont > (cap-1)):
+        if ((cont-increment-1) % dim == 0) or (cont > (cap-1)):
             revisando = False
             continue
         else:
@@ -173,19 +176,17 @@ def makeMove(board, letter, move):
 
 
 def isWinner(brd, let):
-    # Dado um quadro e uma letra, esta funcao retorna True se a letra passada vence o jogo
+    winner = False
+
+    copyBrd = getBoardCopy(brd)
+
     for i in range(1, cap):
         if brd[i] == let:
-            if revisionHorizontal(brd, let, i, 3):
-                return True
-    return ((brd[7] == let and brd[8] == let and brd[9] == let) or  # linha de cima
-            (brd[4] == let and brd[5] == let and brd[6] == let) or  # linha do meio
-            (brd[1] == let and brd[2] == let and brd[3] == let) or  # linha de baixo
-            (brd[7] == let and brd[4] == let and brd[1] == let) or  # columnauna da esquerda
-            (brd[8] == let and brd[5] == let and brd[2] == let) or  # columnauna do meio
-            (brd[9] == let and brd[6] == let and brd[3] == let) or  # columnauna da direito
-            (brd[7] == let and brd[5] == let and brd[3] == let) or  # diagonal principal
-            (brd[9] == let and brd[5] == let and brd[1] == let))  # diagonal secundaria
+            if revisionHorizontal(copyBrd, let, i, 3) or revisionVertical(copyBrd, let, i, 3) or revisionDiagonal(copyBrd, let, i, 3) or revisionDiagonalI(copyBrd, let, i, 3):
+                winner = True
+                break
+
+    return winner
 
 
 def isSpaceFree(board, move):
@@ -198,19 +199,38 @@ def isSpaceFree(board, move):
 
 def getPlayerMove(board):
     # Recebe o movimento do jogador
-    move = ''
-    while move not in celdas or not isSpaceFree(board, int(move)):
+    movimiento = ''
+    while movimiento not in celdas or not isSpaceFree(board, int(movimiento)):
         print('Cual es su próximo movimiento? (1-25)')
-        move = input();
-        if (move not in celdas):
+        movimiento = input()
+        if movimiento not in celdas:
             print("MOVIMIENTO INVALIDO! ESCRIBE UN NUMERO ENTRE 1 y 25!")
+            continue
 
-        if (move in celdas):
-            if (not isSpaceFree(board, int(move))):
-                print(
-                    "ESPACIO NO DISPONIBLE! ESCOJA OTRO ESPACIO ENTRE 1 y 25 U OTRO NÚMERO DEL TABLERO!")
+        if movimiento in celdas:
+            if not isAvailableToPlay(board, 6) and movimiento in celdas_bloqueadas:
+                movimiento = '26'
+                print("ESPACIO NO DISPONIBLE! Espera a que queden seis espacios disponibles!")
+                continue
+            if not isSpaceFree(board, int(movimiento)):
+                movimiento = '26'
+                print("ESPACIO NO DISPONIBLE! ESCOJA OTRO ESPACIO ENTRE 1 y 25 U OTRO NÚMERO DEL TABLERO!")
+                continue
 
-    return int(move)
+    return int(movimiento)
+
+
+def isAvailableToPlay(brd, num):
+    copyBrd = getBoardCopy(brd)
+    disponibles = 0
+    for i in range(1, cap):
+        if (copyBrd[i] == ''):
+            disponibles += 1
+
+    if disponibles <= num:
+        return True
+    else:
+        return False
 
 
 def chooseRandomMoveFromList(board, movesList):
@@ -236,16 +256,43 @@ def isBoardFull(board):
     return True
 
 
-def possiveisOpcoes(board):
-    # Retorna uma lista com todos os espacos no quadro que estao disponiveis
+def possiveisOpcoes(board, let):
+    opciones = []
+    brd = getBoardCopy(board)
 
-    opcoes = []
-
+    isPopulated = False
     for i in range(1, cap):
-        if isSpaceFree(board, i):
-            opcoes.append(i)
+        if brd[i] == let:
+            isPopulated = True
 
-    return opcoes
+    if isPopulated:
+        for i in range(1, cap):
+            for j in range(1, 3):
+                if brd[int(i)] == let:
+                    if (int(i) + j) < cap:
+                        if revisionHorizontal(brd, let, int(i), j) and not ((int(i) + (j - 1)) % dim == 0) and isSpaceFree(brd, int(i) + j):
+                            opciones.append(int(i) + j)
+                    if (int(i) + (j * 5)) < cap:
+                        if revisionVertical(brd, let, int(i), j) and isSpaceFree(brd, int(i) + (j * 5)):
+                            opciones.append(int(i) + (j * 5))
+                    if (int(i) + (j * (dim + 1))) < cap:
+                        if revisionDiagonal(brd, let, int(i), j) and not ((int(i) + (j * (dim + 1))) % dim == 0) and isSpaceFree(brd, int(i) + (j * (dim + 1))):
+                            opciones.append(int(i) + (j * (dim + 1)))
+                    if (int(i) + (j * (dim - 1))) < cap:
+                        if revisionDiagonalI(brd, let, int(i), j) and not ((int(i) + (j * (dim - 1) - 1)) % dim == 0) and isSpaceFree(brd, int(i) + (j * (dim - 1))):
+                            opciones.append(int(i) + (j * (dim - 1)))
+    else:
+        for i in range(1, cap):
+            if isSpaceFree(brd, i):
+                if not isAvailableToPlay(brd, 6) and not (i in celdas_bloqueadas_ai):
+                    opciones.append(i)
+
+    '''if len(opciones) != 0:
+        for i in opciones:
+            if not isAvailableToPlay(brd, 6) and (i in celdas_bloqueadas_ai):
+                opciones.pop(opciones.index(i))'''
+
+    return opciones
 
 
 def finishGame(board, computerLetter):
@@ -291,7 +338,7 @@ def alphabeta(board, computerLetter, turn, alpha, beta):
     if (finish != None):
         return finish
 
-    possiveis = possiveisOpcoes(board)
+    possiveis = possiveisOpcoes(board, computerLetter)
 
     if turn == computerLetter:
         for move in possiveis:
@@ -339,7 +386,8 @@ def getComputerMove(board, turn, computerLetter):
         if isSpaceFree(copy, i):
             makeMove(copy, computerLetter, i)
             if isWinner(copy, computerLetter):
-                return i
+                if isAvailableToPlay(board, 6) and (i not in celdas_bloqueadas_ai):
+                    return i
 
     # Checa se o jogador pode vencer no proximo movimento e bloqueia
     for i in range(1, cap):
@@ -347,9 +395,10 @@ def getComputerMove(board, turn, computerLetter):
         if isSpaceFree(copy, i):
             makeMove(copy, playerLetter, i)
             if isWinner(copy, playerLetter):
-                return i
+                if isAvailableToPlay(board, 6) and (i not in celdas_bloqueadas_ai):
+                    return i
 
-    possiveisOpcoesOn = possiveisOpcoes(board)
+    possiveisOpcoesOn = possiveisOpcoes(board, computerLetter)
 
     for move in possiveisOpcoesOn:
 
@@ -364,6 +413,12 @@ def getComputerMove(board, turn, computerLetter):
         elif val == a:
             opcoes.append(move)
 
+    if len(opcoes) == 0:
+        m = 0
+        while len(opcoes) == 0:
+            m = random.randint(1, 25)
+            if m not in celdas_bloqueadas_ai:
+                opcoes.append()
     return random.choice(opcoes)
 
 
