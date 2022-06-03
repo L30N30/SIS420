@@ -2,6 +2,7 @@ import random
 import time
 
 
+# Crea una población del tamaño especificado
 def crear_poblacion(numero, longitud):
     pob = []
     for i in range(numero):
@@ -44,7 +45,7 @@ def mutar(individuo, longitud):
 def procrear(individuo1, individuo2):
     hijo = []
     for i in range(len(individuo1)):
-        if i%2 == 0:
+        if i % 2 == 0:
             hijo.append(individuo1[i])
         else:
             hijo.append(individuo2[i])
@@ -56,7 +57,7 @@ def sort_key(company):
 
 
 def run():
-    num_procreacion = 30
+    num_procreacion = 20
     prob_mutacion = 0.1
     numero_empleados = 10
     numero_individuos = 100
@@ -71,16 +72,31 @@ def run():
     start = time.time()
 
     resuelto = False
+    ciclos = 0
 
     while not resuelto:
         if individuos_fit[0][1] == 0:
             resuelto = True
         else:
+            ciclos += 1
             individuos = []
             cont = 0
             # Reiniciar la lista de individuos
             for i in individuos_fit:
                 individuos.append(i[0])
+
+            # Quitar duplicados
+            '''result = []
+            for i in individuos:
+                if i not in result:
+                    result.append(i)
+            individuos = []
+            individuos = result'''
+
+            # Repoblación nueva
+            '''if len(individuos) < numero_individuos:
+                while len(individuos) < numero_individuos:
+                    individuos.append(crear_individuo(numero_empleados))'''
 
             # Procrear mejores individuos
             for i in range(num_procreacion):
@@ -106,6 +122,7 @@ def run():
     end = time.time()
 
     print(individuos_fit[0][0])
-    print(end - start)
+    print(round(end-start, 3))
+    print(ciclos)
 
 run()
