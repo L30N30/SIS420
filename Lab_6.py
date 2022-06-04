@@ -57,15 +57,19 @@ def sort_key(company):
 
 
 def run():
-    num_procreacion = 20
-    prob_mutacion = 0.1
-    numero_empleados = 10
-    numero_individuos = 100
+    quitar_duplicados = False  # Quita los duplicados de la población
+    mantener_poblacion = False  # Repoblación al azar en caso de haber un número menor al especificado
+    controlar_sobrepoblacion = True  # Mantiene el número de población menor o igual al especificado
 
-    individuos = crear_poblacion(numero_individuos, numero_empleados)
+    num_procreacion = 30  # Recomendado = 30, menor al número de individuos
+    prob_mutacion = 0.1
+    numero_empleados = 10  # Recomendado = 10
+    numero_individuos = 1000  # Recomendado = 1000
+
+    poblacion = crear_poblacion(numero_individuos, numero_empleados)
     individuos_fit = []
 
-    for i in individuos:
+    for i in poblacion:
         individuos_fit.append([i, fitness(i)])
     individuos_fit.sort(key=sort_key)
 
@@ -79,50 +83,86 @@ def run():
             resuelto = True
         else:
             ciclos += 1
-            individuos = []
+            poblacion = []
             cont = 0
             # Reiniciar la lista de individuos
             for i in individuos_fit:
-                individuos.append(i[0])
+                poblacion.append(i[0])
 
             # Quitar duplicados
-            '''result = []
-            for i in individuos:
-                if i not in result:
-                    result.append(i)
-            individuos = []
-            individuos = result'''
+            if quitar_duplicados:
+                # print('Purgando duplicados...')
+                result = []
+                for i in poblacion:
+                    if i not in result:
+                        result.append(i)
+                poblacion = []
+                poblacion = result
 
             # Repoblación nueva
-            '''if len(individuos) < numero_individuos:
-                while len(individuos) < numero_individuos:
-                    individuos.append(crear_individuo(numero_empleados))'''
+            if mantener_poblacion and (len(poblacion) < numero_individuos):
+                # print('Repoblando...')
+                while len(poblacion) < numero_individuos:
+                    poblacion.append(crear_individuo(numero_empleados))
 
             # Procrear mejores individuos
             for i in range(num_procreacion):
-                individuos.append(procrear(individuos[i], individuos[i+1]))
+                poblacion.append(procrear(poblacion[i], poblacion[i+1]))
 
             # Mutar individuos al azar
-            for i in range(len(individuos)):
-                if random.randint(0, (prob_mutacion*100)) == 0:
-                    individuos.append(mutar(individuos[i], numero_empleados))
-                    individuos.pop(i)
+            for i in range(len(poblacion)):
+                if random.randint(1, 100/(prob_mutacion*100)) == 1:
+                    poblacion.append(mutar(poblacion[i], numero_empleados))
+                    poblacion.pop(i)
 
             individuos_fit = []
             # Sacar el fitness de la nueva población y ordenarla
-            for i in individuos:
+            for i in poblacion:
                 individuos_fit.append([i, fitness(i)])
             individuos_fit.sort(key=sort_key)
 
             # Reducir la población al número de individuos original
-            while len(individuos_fit) > numero_individuos:
-                individuos_fit.pop()
-            print(individuos_fit)
+            if controlar_sobrepoblacion:
+                # print('Purgando sobrepoblación...')
+                while len(individuos_fit) > numero_individuos:
+                    individuos_fit.pop()
+
+            # print(individuos_fit)
+            # print(f'Número de población: {len(individuos_fit)}')
 
     end = time.time()
+    tiempo = round(end-start, 3)
 
-    print(individuos_fit[0][0])
-    print(round(end-start, 3))
-    print(ciclos)
+    return individuos_fit[0][0], tiempo, ciclos
 
-run()
+    # print('====================')
+    # print(individuos_fit[0][0])
+    # print(f'Tiempo: {round(end-start, 3)} seg')
+    # print(f'{ciclos} generaciones')
+
+
+def testing_grounds(numero_pruebas):
+    suma = 0
+    minimo = 1000
+    maximo = 0
+
+    for i in range(numero_pruebas):
+        individuo, tiempo, ciclos = run()
+
+        if tiempo > maximo:
+            maximo = float(tiempo)
+        if tiempo < minimo:
+            minimo = float(tiempo)
+
+        suma += tiempo
+        # print(f'Individuo: {individuo}')
+        print(f'Tiempo {i+1}: {tiempo}')
+        # print(f'Generaciones: {ciclos}')
+
+    print('=========================')
+    print(f'Tiempo promedio: {round(suma/numero_pruebas, 3)}')
+    print(f'Tiempo mínimo: {minimo}')
+    print(f'Tiempo máximo: {maximo}')
+
+
+testing_grounds(100)
