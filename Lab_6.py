@@ -18,6 +18,7 @@ def asignar_puntajes(longitud):
     for i in range(longitud * 10):
         lista.append(random.choice(nombres))
 
+    # print(lista)
     return lista
 
 
@@ -71,10 +72,6 @@ def procrear(individuo1, individuo2):
         else:
             hijo.append(individuo2[i])
     return hijo
-
-
-def sort_key(lista):
-    return lista[1]
 
 
 # Realiza la búsqueda
