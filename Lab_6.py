@@ -2,6 +2,25 @@ import random
 import time
 
 
+nombres = ['Alberto', 'José', 'María', 'Daniel', 'Benjamin', 'Pablo', 'Antonio', 'Debora', 'Ivana', 'Leonardo',
+           'Danilo', 'Mateo', 'Elva', 'Isabel', 'Alejandro', 'Alejandra', 'Roberto', 'Dana', 'Sara', 'Monica',
+           'Veronica', 'Wendy', 'Nicole', 'Dayana', 'Marco']
+
+
+def sort_key(lista):
+    return lista[1]
+
+
+# Crea una lista aleatoria con nombres escogidos al azar
+def asignar_puntajes(longitud):
+    lista = []
+
+    for i in range(longitud * 10):
+        lista.append(random.choice(nombres))
+
+    return lista
+
+
 # Crea una población del tamaño especificado
 def crear_poblacion(numero, longitud):
     pob = []
@@ -29,6 +48,7 @@ def fitness(individuo):
     return fit
 
 
+# Muta el individuo en una sola posición
 def mutar(individuo, longitud):
     hijo_mutado = []
     pos_mutacion = random.randint(0, len(individuo)-1)
@@ -42,6 +62,7 @@ def mutar(individuo, longitud):
     return hijo_mutado
 
 
+# Recibe dos individuos y los cruza en posiciones intercaladas
 def procrear(individuo1, individuo2):
     hijo = []
     for i in range(len(individuo1)):
@@ -52,20 +73,27 @@ def procrear(individuo1, individuo2):
     return hijo
 
 
-def sort_key(company):
-    return company[1]
+def sort_key(lista):
+    return lista[1]
 
 
+# Realiza la búsqueda
 def run():
+    # Lista de los puestos disponibles
+    lista_puestos = ['Jefe', 'Sub Jefe', 'Manager', 'Ingeniero 1', 'Ingeniero 2',
+                     'Administrador 1', 'Administrador 2', 'Secretario 1', 'Secretario 2', 'Secretario 3']
+
     quitar_duplicados = False  # Quita los duplicados de la población
     mantener_poblacion = False  # Repoblación al azar en caso de haber un número menor al especificado
     controlar_sobrepoblacion = True  # Mantiene el número de población menor o igual al especificado
 
-    num_procreacion = 30  # Recomendado = 30, menor al número de individuos
-    prob_mutacion = 0.1
-    numero_empleados = 10  # Recomendado = 10
+    # Recomendado = 300, siempre menor al número de individuos (razón de 1/3 número de individuos)
+    num_procreacion = 300
+    prob_mutacion = 0.2  # Recomendado = 20%
+    numero_empleados = int(len(lista_puestos))  # Recomendado = 10
     numero_individuos = 1000  # Recomendado = 1000
 
+    lista_nombres = asignar_puntajes(numero_empleados)
     poblacion = crear_poblacion(numero_individuos, numero_empleados)
     individuos_fit = []
 
@@ -73,10 +101,10 @@ def run():
         individuos_fit.append([i, fitness(i)])
     individuos_fit.sort(key=sort_key)
 
-    start = time.time()
-
     resuelto = False
     ciclos = 0
+
+    start = time.time()
 
     while not resuelto:
         if individuos_fit[0][1] == 0:
@@ -111,7 +139,7 @@ def run():
 
             # Mutar individuos al azar
             for i in range(len(poblacion)):
-                if random.randint(0, 100/(prob_mutacion*100) - 1) == 0:
+                if random.randint(0, int(100/(prob_mutacion*100) - 1)) == 0:
                     poblacion.append(mutar(poblacion[i], numero_empleados))
                     poblacion.pop(i)
 
@@ -130,44 +158,16 @@ def run():
             # print(individuos_fit)
             # print(f'Número de población: {len(individuos_fit)}')
 
+    # Imprime a los empleados contratados y sus puestos
+    for i in range(numero_empleados):
+        print(f'Puesto de {lista_puestos[i]}: {lista_nombres[i*10]}')
     end = time.time()
-    tiempo = round(end-start, 3)
+    tiempo = round(end - start, 3)
 
-    return individuos_fit[0][0], tiempo, ciclos
-
-    # print('====================')
-    # print(individuos_fit[0][0])
-    # print(f'Tiempo: {round(end-start, 3)} seg')
-    # print(f'{ciclos} generaciones')
+    print('====================')
+    print(f'Individuo ideal: {individuos_fit[0][0]}')
+    print(f'Tiempo: {tiempo} seg')
+    print(f'{ciclos} generaciones')
 
 
-def testing_grounds(numero_pruebas):
-    suma = 0
-    minimo = 1000
-    maximo = 0
-
-    tmp = time.time()
-
-    for i in range(numero_pruebas):
-        individuo, tiempo, ciclos = run()
-
-        if tiempo > maximo:
-            maximo = float(tiempo)
-        if tiempo < minimo:
-            minimo = float(tiempo)
-
-        suma += tiempo
-        # print(f'Individuo: {individuo}')
-        print(f'Tiempo {i+1}: {tiempo}')
-        # print(f'Generaciones: {ciclos}')
-
-    tmp_end = time.time()
-    print('=========================')
-    print(f'Tiempo promedio: {round(suma/numero_pruebas, 3)}')
-    print(f'Tiempo mínimo: {minimo}')
-    print(f'Tiempo máximo: {maximo}')
-
-    print(f'Tiempo de trabajo: {round(tmp_end - tmp, 3)}')
-
-
-testing_grounds(1000)
+run()
