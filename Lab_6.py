@@ -111,7 +111,7 @@ def run():
 
             # Mutar individuos al azar
             for i in range(len(poblacion)):
-                if random.randint(1, 100/(prob_mutacion*100)) == 1:
+                if random.randint(0, 100/(prob_mutacion*100) - 1) == 0:
                     poblacion.append(mutar(poblacion[i], numero_empleados))
                     poblacion.pop(i)
 
@@ -146,6 +146,8 @@ def testing_grounds(numero_pruebas):
     minimo = 1000
     maximo = 0
 
+    tmp = time.time()
+
     for i in range(numero_pruebas):
         individuo, tiempo, ciclos = run()
 
@@ -159,11 +161,13 @@ def testing_grounds(numero_pruebas):
         print(f'Tiempo {i+1}: {tiempo}')
         # print(f'Generaciones: {ciclos}')
 
+    tmp_end = time.time()
     print('=========================')
     print(f'Tiempo promedio: {round(suma/numero_pruebas, 3)}')
     print(f'Tiempo mínimo: {minimo}')
     print(f'Tiempo máximo: {maximo}')
 
+    print(f'Tiempo de trabajo: {round(tmp_end - tmp, 3)}')
 
-testing_grounds(100)
-print('dan')
+
+testing_grounds(1000)
