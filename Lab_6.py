@@ -6,6 +6,13 @@ nombres = ['Alberto', 'José', 'María', 'Daniel', 'Benjamin', 'Pablo', 'Antonio
            'Danilo', 'Mateo', 'Elva', 'Isabel', 'Alejandro', 'Alejandra', 'Roberto', 'Dana', 'Sara', 'Monica',
            'Veronica', 'Wendy', 'Nicole', 'Dayana', 'Marco']
 
+# Lista de los puestos disponibles
+lista_puestos = ['Jefe', 'Sub Jefe', 'Manager', 'Ingeniero 1', 'Ingeniero 2',
+                 'Administrador 1', 'Administrador 2', 'Secretario 1', 'Secretario 2', 'Secretario 3']
+
+
+# lista_puestos = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']
+
 
 def sort_key(lista):
     return lista[1]
@@ -76,10 +83,6 @@ def procrear(individuo1, individuo2):
 
 # Realiza la búsqueda
 def run():
-    # Lista de los puestos disponibles
-    lista_puestos = ['Jefe', 'Sub Jefe', 'Manager', 'Ingeniero 1', 'Ingeniero 2',
-                     'Administrador 1', 'Administrador 2', 'Secretario 1', 'Secretario 2', 'Secretario 3']
-
     quitar_duplicados = False  # Quita los duplicados de la población
     mantener_poblacion = False  # Repoblación al azar en caso de haber un número menor al especificado
     controlar_sobrepoblacion = True  # Mantiene el número de población menor o igual al especificado
@@ -109,7 +112,7 @@ def run():
         else:
             ciclos += 1
             poblacion = []
-            cont = 0
+
             # Reiniciar la lista de individuos
             for i in individuos_fit:
                 poblacion.append(i[0])
@@ -141,6 +144,7 @@ def run():
                     poblacion.pop(i)
 
             individuos_fit = []
+
             # Sacar el fitness de la nueva población y ordenarla
             for i in poblacion:
                 individuos_fit.append([i, fitness(i)])
