@@ -4,76 +4,67 @@ from matplotlib import pyplot
 import matplotlib.pyplot as plot
 
 
-# Acides Fija, Acidez Volátil, Ácido Cítrico, Azúcar Residual, Cloros, Sin Dióxido de Azufre
-# Dióxido de azufre total, Densidad, pH, Sulfatos, Alcohol, Calidad
+'''
+11 variables independientes, 1 etiqueta (Calidad)
+---------------------------
+PREDECIR: Calidad
+---------------------------
+BASADO EN:
+1. Acides Fija
+2. Acidez Volátil
+3. Ácido Cítrico
+4. Azúcar Residual
+5. Cloros
+6. Sin Dióxido de Azufre
+7. Dióxido de azufre total
+8. Densidad
+9. pH
+10. Sulfatos
+11. Alcohol
+'''
 
-# 11 variables independientes, 1 etiqueta (Calidad)
 
-
-def costo_multiple(X, y, theta):
-    # Inicializa algunos valores utiles
-    m = y.shape[0]  # numero de ejemplos de entrenamiento
-    J = 0
-    h = np.dot(X, theta)
-    J = (1 / (2 * m)) * np.sum(np.square(np.dot(X, theta) - y))
-    print(J)
-
-    return J
-
-
-def gradiente_multiple(X, y, theta, alpha, num_itera):
-    # Inicializa algunos valores
+def costo_multiple(x, y, theta):
     m = y.shape[0]
 
-    # realiza una copia de theta, el cual será acutalizada por el descenso por el gradiente
+    costo = 0
+    costo = (1 / (2 * m)) * np.sum(np.square(np.dot(x, theta) - y))
+    # print(costo)
+
+    return costo
+
+
+def gradiente_multiple(x, y, theta, alpha, num_itera):
+    m = y.shape[0]
+
     theta = theta.copy()
 
     j_historial = []
 
     for i in range(num_itera):
-        theta = theta - (alpha / m) * (np.dot(X, theta) - y).dot(X)
-        j_historial.append(costo_multiple(X, y, theta))
+        theta = theta - ((alpha / m) * (np.dot(x, theta) - y).dot(x))
+        j_historial.append(costo_multiple(x, y, theta))
 
     return theta, j_historial
 
 
 def normalizar_muestras(X):
-    mu = np.mean(X, axis=0)
-    sigma = np.std(X, axis=0)
-    x_norm = (X - mu) / sigma
+    prom = np.mean(X, axis=0)
+    des_est = np.std(X, axis=0)
 
-    return x_norm #, mu, sigma
+    x_norm = (X - prom) / des_est
+
+    return x_norm
 
 
 def run():
     # Leer datos
     data = np.loadtxt('calidad_vino_rojo_dataset.txt', delimiter=';')
-    # x0, x1, x2, x3, x4 = data[:, 0], data[:, 1], data[:, 2], data[:, 3], data[:, 4]
-    # x5, x6, x7, x8, x9, x10 = data[:, 5], data[:, 6], data[:, 7], data[:, 8], data[:, 9], data[:, 10]
     x = data[:, :11]
     y = data[:, 11]
     m = y.size
 
-    '''x0 = np.stack([np.ones(m), x0], axis=1)
-    x1 = np.stack([np.ones(m), x1], axis=1)
-    x2 = np.stack([np.ones(m), x2], axis=1)
-    x3 = np.stack([np.ones(m), x3], axis=1)
-    x4 = np.stack([np.ones(m), x4], axis=1)
-    x5 = np.stack([np.ones(m), x5], axis=1)
-    x6 = np.stack([np.ones(m), x6], axis=1)
-    x7 = np.stack([np.ones(m), x7], axis=1)
-    x8 = np.stack([np.ones(m), x8], axis=1)
-    x9 = np.stack([np.ones(m), x9], axis=1)
-    x10 = np.stack([np.ones(m), x10], axis=1)'''
-
-    # stack_x = [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10]
-
-    # theta = np.zeros(len(stack_x) + 1)
-    # print(theta)
-
     x_normalizado = normalizar_muestras(x)
-    # print(x_normalizado)
-
     x = np.concatenate([np.ones((m, 1)), x_normalizado], axis=1)
 
     theta = np.zeros(12)
@@ -85,10 +76,13 @@ def run():
 
     pyplot.plot(np.arange(len(j_historial)), j_historial, lw=2)
     pyplot.xlabel('Numero de iteraciones')
-    pyplot.ylabel('Costo J')
+    pyplot.ylabel('Costo')
 
     print(theta)
     plot.show()
+
+    datos_prediccion = [1, 6.9, 0.48, 0.2, 1.9, 0.082, 9, 23, 0.99585, 3.39, 0.43, 9.05]
+    print(f'Predicción de calidad: {np.dot(theta, datos_prediccion)}')
 
 
 run()
