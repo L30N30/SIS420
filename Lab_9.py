@@ -51,7 +51,7 @@ def sigmoid(z):
 
 
 def sig(val):
-    return 1 / (1 + (math.e ** val))
+    return 1 / (1 + (math.e ** (-val)))
 
 
 def descenso_gradiente(theta, x, y, alpha, num_itera):
@@ -92,13 +92,20 @@ def run():
     theta = np.zeros(7)
     theta, j_historial = descenso_gradiente(theta, x, y, alpha, num_itera)
 
+    options = {'maxiter': 1000}
+
+    initial_theta = np.zeros(7)
+    res = optimize.minimize(costFunction, initial_theta, (x, y), jac=True, method='TNC', options=options)
+    cost = res.fun
+    theta = res.x
+
     pyplot.plot(np.arange(len(j_historial)), j_historial, lw=2)
     pyplot.xlabel('Numero de iteraciones')
     pyplot.ylabel('Costo J')
 
     plot.show()
 
-    x_prediccion = [1, 1000, 37.3, 40, 43.5, 12.354, 6.525]
+    x_prediccion = [1, 100, 16.2, 18, 19.2, 5.2224, 3.3216]
     esBream = round(sig(np.dot(x_prediccion, theta)))
     print(esBream)
 
