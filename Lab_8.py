@@ -1,12 +1,6 @@
-import os
 import numpy as np
-from matplotlib import pyplot
-import matplotlib.pyplot as plot
-from mpl_toolkits.mplot3d import Axes3D
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error
-
 
 '''
 EXPECTATIVA MEDIA DE VIDA
@@ -36,31 +30,21 @@ def run():
     x = data[:, 1:19]
     y = data[:, 0]
     m = y.size
-    # print(x)
+    print('Datos Adquiridos')
 
-    pf = PolynomialFeatures(degree=5)
-    # print(x.shape)
+    pf = PolynomialFeatures(degree=3)
     x = pf.fit_transform(x.reshape(-1, 18))
-    # print(x.shape)
 
     regresion_lineal = LinearRegression()
-
     regresion_lineal.fit(x, y)
 
-    print('theta = ' + str(regresion_lineal.coef_) + ', b = ' + str(regresion_lineal.intercept_))
+    print('Calculando predicción')
 
-    # Predecimos los valores y para los datos usados en el entrenamiento
-    prediccion_entrenamiento = regresion_lineal.predict(x)
-    m_error_cuad = mean_squared_error(y_true=y, y_pred=prediccion_entrenamiento)
-    # La raíz cuadrada del MSE es el RMSE
-    rmse = np.sqrt(m_error_cuad)
-    print('Error Cuadrático Medio (MSE) = ' + str(m_error_cuad))
-    print('Raíz del Error Cuadrático Medio (RMSE) = ' + str(rmse))
-    # calculamos el coeficiente de determinación R2
-    r2 = regresion_lineal.score(x, y)
-    print('Coeficiente de Determinación R2 = ' + str(r2))
-
-    # test = data[]
+    x_prediccion = np.array([263, 62, 0.01, 71.2796, 65, 1154, 19.1, 83, 6, 8.16, 65, 0.1, 584.2592, 33736494, 17.2, 17.3, 0.479, 10.1])
+    x_prediccion = pf.fit_transform(x_prediccion.reshape(-1, 18))
+    prediccion = regresion_lineal.predict(x_prediccion)
+    print(prediccion)
+    print(x_prediccion)
 
 
 run()
