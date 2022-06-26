@@ -43,7 +43,7 @@ def lr_cost_function(theta, x, y, lambda_):
     if y.dtype == bool:
         y = y.astype(int)
 
-    J = 0
+    j = 0
     grad = np.zeros(theta.shape)
 
     h = sigmoid(x.dot(theta.T))
@@ -51,12 +51,12 @@ def lr_cost_function(theta, x, y, lambda_):
     temp = theta
     temp[0] = 0
 
-    J = (1 / m) * np.sum(-y.dot(np.log(h)) - (1 - y).dot(np.log(1 - h))) + (lambda_ / (2 * m)) * np.sum(np.square(temp))
+    j = (1 / m) * np.sum(-y.dot(np.log(h)) - (1 - y).dot(np.log(1 - h))) + (lambda_ / (2 * m)) * np.sum(np.square(temp))
 
     grad = (1 / m) * (h - y).dot(x)
     grad = grad + (lambda_ / m) * temp
 
-    return J, grad
+    return j, grad
 
 
 def one_vs_all(x, y, num_labels, lambda_):
@@ -89,7 +89,7 @@ def predict_one_vs_all(all_theta, x):
 
 
 def run():
-    data = np.loadtxt('fasion_mnist/fashion-mnist_train.csv', delimiter=',', skiprows=1)
+    data = np.loadtxt('fashion_mnist/fashion-mnist_train.csv', delimiter=',', skiprows=1)
 
     input_layer_size = 784
     num_labels = 10
@@ -105,10 +105,10 @@ def run():
     lambda_ = 0.1
     all_theta = one_vs_all(x, y, num_labels, lambda_)
 
-    valor_inferior = 999 # Max: 999
+    valor_inferior = 999 # Max: 9999
     valor_superior = valor_inferior + 1
 
-    data_test = np.loadtxt('fasion_mnist/fashion-mnist_test.csv', delimiter=',', skiprows=1)
+    data_test = np.loadtxt('fashion_mnist/fashion-mnist_test.csv', delimiter=',', skiprows=1)
     x_test = data_test[:, 1:input_layer_size + 1]
     y_test = data_test[:, 0].ravel()
 
