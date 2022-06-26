@@ -80,7 +80,7 @@ def predecir(theta, x):
 
 def run():
     data = np.loadtxt('pescados_dataset.txt', delimiter='\t')
-    x = data[:, :6]
+    x = data[:, 1:6]
     y = data[:, 6]
     m = y.size
 
