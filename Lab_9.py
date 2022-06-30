@@ -105,9 +105,10 @@ def run():
 
     plot.show()
 
-    x_prediccion = [1, 100, 16.2, 18, 19.2, 5.2224, 3.3216]
+    x_prediccion = [1, 200, 16.2, 18, 19.2, 5.2224, 3.3216]
+    # x_prediccion = [1, 290, 24, 26.3, 31.2, 12.48, 4.3056]
     esBream = round(100 * sig(np.dot(x_prediccion, theta)), 2)
-    print(esBream)
+    print(f'El pescado tiene: {esBream}% de probabilidad de ser de especia Bream')
 
 
 run()

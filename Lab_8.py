@@ -44,7 +44,6 @@ def run():
     x_prediccion = pf.fit_transform(x_prediccion.reshape(-1, 18))
     prediccion = regresion_lineal.predict(x_prediccion)
     print(prediccion)
-    print(x_prediccion)
 
 
 run()

@@ -82,7 +82,7 @@ def run():
     plot.show()
 
     datos_prediccion = [1, 6.9, 0.48, 0.2, 1.9, 0.082, 9, 23, 0.99585, 3.39, 0.43, 9.05]
-    print(f'Predicción de calidad: {np.dot(theta, datos_prediccion)}')
+    print(f'Predicción de calidad: {round(np.dot(theta, datos_prediccion), 4)}')
 
 
 run()
