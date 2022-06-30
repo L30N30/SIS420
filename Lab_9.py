@@ -80,7 +80,7 @@ def predecir(theta, x):
 
 def run():
     data = np.loadtxt('pescados_dataset.txt', delimiter='\t')
-    x = data[:, 1:6]
+    x = data[:, 0:6]
     y = data[:, 6]
     m = y.size
 
@@ -106,7 +106,7 @@ def run():
     plot.show()
 
     x_prediccion = [1, 100, 16.2, 18, 19.2, 5.2224, 3.3216]
-    esBream = round(sig(np.dot(x_prediccion, theta)))
+    esBream = round(100 * sig(np.dot(x_prediccion, theta)), 2)
     print(esBream)
 
 
