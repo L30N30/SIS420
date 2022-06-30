@@ -4,6 +4,7 @@ from matplotlib import pyplot
 from scipy import optimize
 from scipy.io import loadmat
 import matplotlib.pyplot as plot
+import random
 
 
 def display_data(x, example_width=None, figsize=(28, 28)):
@@ -89,40 +90,42 @@ def predict_one_vs_all(all_theta, x):
 
 
 def run():
-    data = np.loadtxt('fashion_mnist/fashion-mnist_train.csv', delimiter=',', skiprows=1)
-
     input_layer_size = 784
     num_labels = 10
 
+    data = np.loadtxt('fashion_mnist/fashion-mnist_train.csv', delimiter=',', skiprows=1)
     x = data[:, 1:input_layer_size+1]
     y = data[:, 0].ravel()
     m = y.size
 
-    # rand_indices = np.random.choice(m, 100, replace=False)
-    # sel = x[rand_indices, :]
-    # display_data(sel)
+    '''rand_indices = np.random.choice(m, 100, replace=False)
+    sel = x[rand_indices, :]
+    display_data(sel)
+    plot.show()'''
 
     lambda_ = 0.1
     all_theta = one_vs_all(x, y, num_labels, lambda_)
 
-    valor_inferior = 999 # Max: 9999
-    valor_superior = valor_inferior + 1
-
+    a = 'y'
     data_test = np.loadtxt('fashion_mnist/fashion-mnist_test.csv', delimiter=',', skiprows=1)
     x_test = data_test[:, 1:input_layer_size + 1]
     y_test = data_test[:, 0].ravel()
+    while a == 'y':
+        valor_inferior = random.randint(0, 9999)  # Max: 9999
+        valor_superior = valor_inferior + 1
 
-    predict = predict_one_vs_all(all_theta, x_test)
-    print('Precision del conjunto de entrenamiento: {:.2f}%'.format(np.mean(predict == y_test) * 100))
-    x_prueba = x_test[valor_inferior:valor_superior, :].copy()
-    x_prueba = np.concatenate([np.ones((1, 1)), x_prueba], axis=1)
-    p = np.argmax(sigmoid(x_prueba.dot(all_theta.T)), axis=1)
+        predict = predict_one_vs_all(all_theta, x_test)
+        print('Precision del conjunto de entrenamiento: {:.2f}%'.format(np.mean(predict == y_test) * 100))
+        x_prueba = x_test[valor_inferior:valor_superior, :].copy()
+        x_prueba = np.concatenate([np.ones((1, 1)), x_prueba], axis=1)
+        p = np.argmax(sigmoid(x_prueba.dot(all_theta.T)), axis=1)
 
-    print(f'Predicción aprendida: {p}')
-    display_data(x_test[valor_inferior:valor_superior, :])
-    print(f'Etiqueta original: {y_test[valor_inferior:valor_superior]}')
+        print(f'Predicción aprendida: {p}')
+        display_data(x_test[valor_inferior:valor_superior, :])
+        print(f'Etiqueta original: {y_test[valor_inferior:valor_superior]}')
 
-    plot.show()
+        plot.show()
+        a = input('Y: ')
 
 
 run()
