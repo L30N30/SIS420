@@ -1,13 +1,14 @@
-# import os
+import os
 import numpy as np
 from matplotlib import pyplot
-# from scipy import optimize
+from scipy import optimize
 from scipy.io import loadmat
-import utils
+import matplotlib.pyplot as plot
+import random
 
 
 '''
-ENCONTRAR SI EL INGRESO ES MAYOR A 50K O NO
+PREDECIR SI EL SALARIO DE LA PERSONA ES MAYOR A 50K DÓLARES
 >50K 1, <=50K 0.
 
 age: continuous.
@@ -27,108 +28,104 @@ native-country: United-States 0, Cambodia 1, England 2, Puerto-Rico 3, Canada 4,
 '''
 
 
-def predict(theta_1, theta_2, x):
-    """
-    Predict the label of an input given a trained neural network.
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-z))
 
-    Parameters
-    ----------
-    theta_1 : array_like
-        Weights for the first layer in the neural network.
-        It has shape (2nd hidden layer size x input size)
 
-    theta_2: array_like
-        Weights for the second layer in the neural network.
-        It has shape (output layer size x 2nd hidden layer size)
+def lr_cost_function(theta, x, y, lambda_):
+    m = y.size
 
-    x : array_like
-        The image inputs having shape (number of examples x image dimensions).
+    if y.dtype == bool:
+        y = y.astype(int)
 
-    Return
-    ------
-    p : array_like
-        Predictions vector containing the predicted label for each example.
-        It has a length equal to the number of examples.
+    j = 0
+    grad = np.zeros(theta.shape)
 
-    Hint
-    ----
-    This code can be done all vectorized using the numpy argmax function.
-    In particular, the argmax function returns the index of the  max element,
-    for more information see '?np.argmax' or search online. If your examples
-    are in rows, then, you can use np.argmax(A, axis=1) to obtain the index
-    of the max for each row.
+    h = sigmoid(x.dot(theta.T))
 
-    """
-    # Asegurar que la entrada tenga dos dimensiones
-    if x.ndim == 1:
-        x = x[None]  # Promover a dos dimensiones
+    temp = theta
+    temp[0] = 0
 
-    # Variables útiles
-    m = x.shape[0]
-    num_labels = theta_2.shape[0]
+    j = (1 / m) * np.sum(-y.dot(np.log(h)) - (1 - y).dot(np.log(1 - h))) + (lambda_ / (2 * m)) * np.sum(np.square(temp))
 
-    p = np.zeros(x.shape[0])
+    grad = (1 / m) * (h - y).dot(x)
+    grad = grad + (lambda_ / m) * temp
+
+    return j, grad
+
+
+def one_vs_all(x, y, num_labels, lambda_):
+    m, n = x.shape
+
+    all_theta = np.zeros((num_labels, n + 1))
 
     x = np.concatenate([np.ones((m, 1)), x], axis=1)
 
-    a2 = utils.sigmoid(x.dot(theta_1.T))
-    a2 = np.concatenate([np.ones((a2.shape[0], 1)), a2], axis=1)
+    for c in np.arange(num_labels):
+        initial_theta = np.zeros(n + 1)
+        options = {'maxiter': 50}
+        res = optimize.minimize(lr_cost_function, initial_theta, (x, (y == c), lambda_), jac=True, method='CG', options=options)
 
-    p = np.argmax(utils.sigmoid(a2.dot(theta_2.T)), axis=1)
+        all_theta[c] = res.x
+
+    return all_theta
+
+
+def predict_one_vs_all(all_theta, x):
+    m = x.shape[0];
+    num_labels = all_theta.shape[0]
+
+    p = np.zeros(m)
+
+    x = np.concatenate([np.ones((m, 1)), x], axis=1)
+    p = np.argmax(sigmoid(x.dot(all_theta.T)), axis=1)
 
     return p
 
 
 def run():
+    input_layer_size = 14
+    num_labels = 2
 
     data = np.loadtxt('Adult/adult-train-corregido.csv', delimiter=',', skiprows=1)
-    x = data[:, 0:14]
+    x = data[:, 0:input_layer_size]
     y = data[:, 14].ravel()
-
-    # Se convierte la etiqueta 10 a 0
-    # y[y == 10] = 0
     m = y.size
 
-    # se permutan los ejemplos, para ser usados para visualizar ina imagen a la vez
-    indices = np.random.permutation(m)
-
-    # Selecciona 100 puntos al azar de datos para visualizar
-    rand_indices = np.random.choice(m, 100, replace=False)
+    '''rand_indices = np.random.choice(m, 100, replace=False)
     sel = x[rand_indices, :]
+    display_data(sel)
+    plot.show()'''
 
-    # sel = x[0,:]
-    # utils.displayData(sel)
+    lambda_ = 0.001
+    all_theta = one_vs_all(x, y, num_labels, lambda_)
 
-    # Configura los parámetros que se requieren
-    input_layer_size = 400  # Entrada Imagen de dígitos de 20x20
-    hidden_layer_size = 25  # 25 unidades ocultas
-    num_labels = 10  # 10 etiquetas, del 1 al 10 (se remaps el numero 10 con el valor de 0)
+    a = 'y'
+    data_test = np.loadtxt('Adult/adult-test-corregido.csv', delimiter=',', skiprows=1)
+    x_test = data_test[:, 0:input_layer_size]
+    y_test = data_test[:, 14].ravel()
+    while a == 'y':
+        valor_inferior = random.randint(0, y_test.size-1)  # Max: 9999
+        valor_superior = valor_inferior + 1
 
-    # Carga el archivo .mat, que devuelve un diccionario
-    # weights = loadmat('ex3weights.mat')
+        predict = predict_one_vs_all(all_theta, x_test)
+        print('Precision del conjunto de entrenamiento: {:.2f}%'.format(np.mean(predict == y_test) * 100))
+        x_prueba = x_test[valor_inferior:valor_superior, :].copy()
+        x_prueba = np.concatenate([np.ones((1, 1)), x_prueba], axis=1)
+        p = np.argmax(sigmoid(x_prueba.dot(all_theta.T)), axis=1)
 
-    # Obtiene el modelo de pesos del diccionario
-    # theta_1 has size 25 x 401
-    # theta_2 has size 10 x 26
-    # theta_1, theta_2 = weights['Theta1'], weights['Theta2']
-    theta_1, theta_2 = utils.debugInitializeWeights(15, 10), utils.debugInitializeWeights(11, 1)
+        print(f'Predicción aprendida: {p}')
+        print(f'Etiqueta original: {y_test[valor_inferior:valor_superior]}')
 
-    # Intercambia la primera y la última columna de theta_2, debido al legado de la indexación de MATLAB,
-    # Desde que el archivo de peso ex3weights.mat se guardó según la indexación de MATLAB
-    theta_2 = np.roll(theta_2, 1, axis=0)
+        mensaje = ''
+        if p == 1:
+            mensaje = 'sí'
+        else:
+            mensaje = 'no'
+        print(f'Basado en el aprendizaje, la persona {mensaje} gana más de 50k dólares anuales')
 
-    pred = predict(theta_1, theta_2, x)
-    print('Precisión del conjunto de entrenamiento: {:.3f}%'.format(np.mean(pred == y) * 100))
-
-    if indices.size > 0:
-        i, indices = indices[0], indices[1:]
-        utils.displayData(x[i, :], figsize=(4, 4))
-        pred = predict(theta_1, theta_2, x[i, :])
-        print('Predicción de la red neuronal: {}'.format(*pred))
-    else:
-        print('No hay mas imágenes para mostrar!')
-
-    pyplot.show()
+        plot.show()
+        a = input('Y: ')
 
 
 run()
