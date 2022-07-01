@@ -85,8 +85,8 @@ def run():
     x = data[:, 0:14]
     y = data[:, 14].ravel()
 
-    '''# Se convierte la etiqueta 10 a 0
-    y[y == 10] = 0
+    # Se convierte la etiqueta 10 a 0
+    # y[y == 10] = 0
     m = y.size
 
     # se permutan los ejemplos, para ser usados para visualizar ina imagen a la vez
@@ -97,7 +97,7 @@ def run():
     sel = x[rand_indices, :]
 
     # sel = x[0,:]
-    utils.displayData(sel)
+    # utils.displayData(sel)
 
     # Configura los parámetros que se requieren
     input_layer_size = 400  # Entrada Imagen de dígitos de 20x20
@@ -105,12 +105,13 @@ def run():
     num_labels = 10  # 10 etiquetas, del 1 al 10 (se remaps el numero 10 con el valor de 0)
 
     # Carga el archivo .mat, que devuelve un diccionario
-    weights = loadmat('ex3weights.mat')
+    # weights = loadmat('ex3weights.mat')
 
     # Obtiene el modelo de pesos del diccionario
     # theta_1 has size 25 x 401
     # theta_2 has size 10 x 26
-    theta_1, theta_2 = weights['Theta1'], weights['Theta2']
+    # theta_1, theta_2 = weights['Theta1'], weights['Theta2']
+    theta_1, theta_2 = utils.debugInitializeWeights(15, 10), utils.debugInitializeWeights(11, 1)
 
     # Intercambia la primera y la última columna de theta_2, debido al legado de la indexación de MATLAB,
     # Desde que el archivo de peso ex3weights.mat se guardó según la indexación de MATLAB
@@ -127,7 +128,7 @@ def run():
     else:
         print('No hay mas imágenes para mostrar!')
 
-    pyplot.show()'''
+    pyplot.show()
 
 
 run()

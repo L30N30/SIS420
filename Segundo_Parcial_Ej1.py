@@ -93,25 +93,37 @@ def run():
     input_layer_size = 784
     num_labels = 10
 
-    data = np.loadtxt('fashion_mnist/fashion-mnist_train.csv', delimiter=',', skiprows=1)
-    x = data[:, 1:input_layer_size+1]
-    y = data[:, 0].ravel()
-    m = y.size
+    data_train = np.loadtxt('fashion_mnist/fashion-mnist_train.csv', delimiter=',', skiprows=1)
+    x_train = data_train[:, 1:input_layer_size+1]
+    y_train = data_train[:, 0].ravel()
+
+    data_test = np.loadtxt('fashion_mnist/fashion-mnist_test.csv', delimiter=',', skiprows=1)
+    x_test = data_test[:, 1:input_layer_size + 1]
+    y_test = data_test[:, 0].ravel()
+
+    m1 = y_train.size + y_test.size
+    porcentaje = round(m1 * 0.8)
+    print(porcentaje)
+
+    x = np.concatenate([x_train, x_test], axis=0)
+    x_train = x[:porcentaje]
+    x_test = x[porcentaje:]
+
+    y = np.concatenate([y_train, y_test], axis=0)
+    y_train = y[:porcentaje]
+    y_test = y[porcentaje:]
 
     '''rand_indices = np.random.choice(m, 100, replace=False)
-    sel = x[rand_indices, :]
+    sel = x_train[rand_indices, :]
     display_data(sel)
     plot.show()'''
 
     lambda_ = 0.1
-    all_theta = one_vs_all(x, y, num_labels, lambda_)
+    all_theta = one_vs_all(x_train, y_train, num_labels, lambda_)
 
     a = 'y'
-    data_test = np.loadtxt('fashion_mnist/fashion-mnist_test.csv', delimiter=',', skiprows=1)
-    x_test = data_test[:, 1:input_layer_size + 1]
-    y_test = data_test[:, 0].ravel()
     while a == 'y':
-        valor_inferior = random.randint(0, 9999)  # Max: 9999
+        valor_inferior = random.randint(0, 999)  # Max: 999
         valor_superior = valor_inferior + 1
 
         predict = predict_one_vs_all(all_theta, x_test)
