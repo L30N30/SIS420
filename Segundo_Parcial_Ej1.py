@@ -1,8 +1,6 @@
-import os
 import numpy as np
 from matplotlib import pyplot
 from scipy import optimize
-from scipy.io import loadmat
 import matplotlib.pyplot as plot
 import random
 
@@ -128,6 +126,7 @@ def run():
 
         predict = predict_one_vs_all(all_theta, x_test)
         print('Precision del conjunto de entrenamiento: {:.2f}%'.format(np.mean(predict == y_test) * 100))
+
         x_prueba = x_test[valor_inferior:valor_superior, :].copy()
         x_prueba = np.concatenate([np.ones((1, 1)), x_prueba], axis=1)
         p = np.argmax(sigmoid(x_prueba.dot(all_theta.T)), axis=1)
