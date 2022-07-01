@@ -28,6 +28,15 @@ native-country: United-States 0, Cambodia 1, England 2, Puerto-Rico 3, Canada 4,
 '''
 
 
+def normalizar_muestras(X):
+    prom = np.mean(X, axis=0)
+    des_est = np.std(X, axis=0)
+
+    x_norm = (X - prom) / des_est
+
+    return x_norm
+
+
 def sigmoid(z):
     return 1.0 / (1.0 + np.exp(-z))
 
@@ -63,7 +72,7 @@ def one_vs_all(x, y, num_labels, lambda_):
 
     for c in np.arange(num_labels):
         initial_theta = np.zeros(n + 1)
-        options = {'maxiter': 50}
+        options = {'maxiter': 500}
         res = optimize.minimize(lr_cost_function, initial_theta, (x, (y == c), lambda_), jac=True, method='CG', options=options)
 
         all_theta[c] = res.x
@@ -72,7 +81,7 @@ def one_vs_all(x, y, num_labels, lambda_):
 
 
 def predict_one_vs_all(all_theta, x):
-    m = x.shape[0];
+    m = x.shape[0]
     num_labels = all_theta.shape[0]
 
     p = np.zeros(m)
@@ -89,15 +98,13 @@ def run():
 
     data = np.loadtxt('Adult/adult-train-corregido.csv', delimiter=',', skiprows=1)
     x = data[:, 0:input_layer_size]
+    # x = normalizar_muestras(x)
     y = data[:, 14].ravel()
+    # y = normalizar_muestras(y)
     m = y.size
 
-    '''rand_indices = np.random.choice(m, 100, replace=False)
-    sel = x[rand_indices, :]
-    display_data(sel)
-    plot.show()'''
-
-    lambda_ = 0.001
+    # lambda_ = 0.1
+    lambda_ = 0.0003
     all_theta = one_vs_all(x, y, num_labels, lambda_)
 
     a = 'y'
@@ -105,7 +112,7 @@ def run():
     x_test = data_test[:, 0:input_layer_size]
     y_test = data_test[:, 14].ravel()
     while a == 'y':
-        valor_inferior = random.randint(0, y_test.size-1)  # Max: 9999
+        valor_inferior = random.randint(0, y_test.size-1)
         valor_superior = valor_inferior + 1
 
         predict = predict_one_vs_all(all_theta, x_test)
