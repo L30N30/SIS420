@@ -97,8 +97,8 @@ def predict_one_vs_all(all_theta, x):
 
 
 def run():
-    input_layer_size = 784
-    num_labels = 10
+    input_layer_size = 784  # Número de pixeles
+    num_labels = 10  # 0 - 9
 
     data_train = np.loadtxt('fashion_mnist/fashion-mnist_train.csv', delimiter=',', skiprows=1)
     x_train = data_train[:, 1:input_layer_size+1]

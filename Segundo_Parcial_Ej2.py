@@ -98,19 +98,19 @@ def run():
 
     data = np.loadtxt('Adult/adult-train-corregido.csv', delimiter=',', skiprows=1)
     x = data[:, 0:input_layer_size]
-    # x = normalizar_muestras(x)
+    x = x / 10
     y = data[:, 14].ravel()
-    # y = normalizar_muestras(y)
     m = y.size
 
-    # lambda_ = 0.1
     lambda_ = 0.0003
     all_theta = one_vs_all(x, y, num_labels, lambda_)
 
     a = 'y'
     data_test = np.loadtxt('Adult/adult-test-corregido.csv', delimiter=',', skiprows=1)
     x_test = data_test[:, 0:input_layer_size]
+    x_test = x_test / 10
     y_test = data_test[:, 14].ravel()
+
     while a == 'y':
         valor_inferior = random.randint(0, y_test.size-1)
         valor_superior = valor_inferior + 1
