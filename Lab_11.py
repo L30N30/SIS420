@@ -7,7 +7,6 @@ def run():
     neurons = 32  # 56
     labels = 10
 
-    batch_size = 100
     epochs = 10000
     lr = 1e-2
 
@@ -32,7 +31,7 @@ def run():
         #torch.nn.Linear(neurons, labels)
     )
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)  # SGD
     loss = torch.nn.CrossEntropyLoss()
 
     j_ant = 1000.
