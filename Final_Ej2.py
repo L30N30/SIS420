@@ -17,10 +17,9 @@ def evaluate(x, model):
 
 def run():
     pixels = 28 * 28
-    neurons = 32
-    labels = 10
+    neurons = 30
+    labels = 5
 
-    batch = 1000
     epochs = 100
     lr = 1e-2
 
@@ -35,14 +34,10 @@ def run():
     filtro_train = np.where((y_train % 2) == 0)
     x_train = np.delete(x_train, filtro_train, axis=0)
     y_train = np.delete(y_train, filtro_train)
-    print(y_train.shape)
-    print(x_train.shape)
 
     filtro_test = np.where((y_test % 2) == 0)
     x_test = np.delete(x_test, filtro_test, axis=0)
     y_test = np.delete(y_test, filtro_test)
-    print(y_test.shape)
-    print(x_test.shape)
 
     m1 = y_train.size + y_test.size
     porcentaje = round(m1 * 0.9)
@@ -52,6 +47,13 @@ def run():
     x_test = x[porcentaje:]
 
     y = np.concatenate([y_train, y_test], axis=0)
+
+    y[y == 1] = 0
+    y[y == 3] = 1
+    y[y == 5] = 2
+    y[y == 7] = 3
+    y[y == 9] = 4
+
     y_train = y[:porcentaje]
     y_test = y[porcentaje:]
 
@@ -68,7 +70,7 @@ def run():
         torch.nn.Linear(neurons, labels)
     )
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)  # SGD
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
     loss = torch.nn.CrossEntropyLoss()
 
     for epoch in range(epochs):
@@ -82,8 +84,8 @@ def run():
         optimizer.step()
         print(f'Epoch {epoch + 1}, Loss: {J.item():.3f}')
 
-    y_pred = evaluate(torch.from_numpy(x_test).float(), model)
-    print(f'Precisión: {round(accuracy_score(y_test, y_pred.numpy()) * 100, 3)} %')
+    y_predicha = evaluate(torch.from_numpy(x_test).float(), model)
+    print(f'Precisión: {round(accuracy_score(y_test, y_predicha.numpy()) * 100, 3)} %')
 
 
 run()
